@@ -1,3 +1,5 @@
+import fetchRequest from "./networking/fetchRequest";
+
 export const getId = (min = 1, max = 9) => {
   const fullId = [];
 
@@ -15,8 +17,13 @@ export const countRows = () => {
   });
 };
 
-export const calcTotal = elems => {
-  const pureElems = elems.map(elem => elem.count * elem.price);
+export const calcTotal = async elems => {
+  // console.log(elems);
+  const data = await fetchRequest(elems, {
+    method: 'GET',
+  });
+  console.log(data);
+  const pureElems = data.map(elem => elem.count * elem.price);
   return pureElems.reduce((acc, val) => acc + val, 0);
 };
 
