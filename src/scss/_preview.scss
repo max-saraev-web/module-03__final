@@ -1,0 +1,32 @@
+.preview{
+  grid-area: file-add;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  margin: 0 auto;
+  width: 200px; 
+  height: 200px;
+  overflow: hidden;
+  @media (min-width: 1200px){
+    &:hover .preview__overlay{
+      transform: translateX(0%) !important;
+    }
+  }
+  &__icon{
+    background: center / cover no-repeat url('/src/img/img-bin.svg');
+    transition: all 0.5s ease-in-out;
+    @media (min-width: 1200px) {
+      &:hover{
+      cursor: pointer;
+      transform: scale(1.5);
+      }
+    }
+  }
+  &__img{
+    border-radius: 8px;
+    display: block;
+  }
+}

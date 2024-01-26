@@ -76,6 +76,7 @@ const {
   addBtn,
   cms,
   totalPrice,
+  btnEdit,
 } = elems;
 
 // * - Функционал

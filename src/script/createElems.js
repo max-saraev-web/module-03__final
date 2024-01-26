@@ -1,4 +1,4 @@
-const createElement =
+export const createElement =
   (tag, attr, {append, appends, parent, cb} = {}) => {
     const element = document.createElement(tag);
 
@@ -53,5 +53,20 @@ const createRow = (obj, i, url) => {
     console.log('Это не объект!');
   }
   return elem;
+};
+export const createCategoryList = data => {
+  const list = createElement('datalist',
+    {
+      id: 'category-list',
+    },
+  );
+  const elems = data.map(elem => {
+    const option = createElement('option', {
+      value: `${elem}`,
+    });
+    return option;
+  });
+  list.append(...elems);
+  return list;
 };
 export default createRow;

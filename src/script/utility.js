@@ -1,4 +1,4 @@
-import fetchRequest from "./networking/fetchRequest";
+import fetchRequest from './networking/fetchRequest';
 
 export const getId = (min = 1, max = 9) => {
   const fullId = [];
