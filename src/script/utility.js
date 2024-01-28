@@ -1,3 +1,4 @@
+import { createElement } from './createElems';
 import fetchRequest from './networking/fetchRequest';
 
 export const getId = (min = 1, max = 9) => {
@@ -54,4 +55,17 @@ export const pagesFractions = totalGoods => {
     end += 10;
   }
   return fractions;
+};
+
+export const generateTotalPages = arr => {
+  const newArr = [];
+  for (let i = 1; i < arr.length + 1; i++) {
+    const option = createElement('option', {
+      textContent: i,
+      value: i,
+      selected: `${i === arr.length -1 ? true : false}`,
+    });
+    newArr.push(option);
+  }
+  return newArr;
 };

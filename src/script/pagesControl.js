@@ -1,10 +1,9 @@
 import createRow, {createElement} from './createElems';
 import fetchRequest from './networking/fetchRequest';
-import {pagesFractions} from './utility';
+import {generateTotalPages, pagesFractions} from './utility';
 
 const pagesControl = async (url, elems, tBody) => {
   const {
-    block,
     prev,
     next,
     wrap,
@@ -25,18 +24,7 @@ const pagesControl = async (url, elems, tBody) => {
   const itemsToShow = createElement('select', {}, {
     parent: wrap,
   });
-  const generateTotalPages = arr => {
-    const newArr = [];
-    for (let i = 1; i < arr.length + 1; i++) {
-      const option = createElement('option', {
-        textContent: i,
-        value: i,
-        selected: `${i === arr.length -1 ? true : false}`,
-      });
-      newArr.push(option);
-    }
-    return newArr;
-  };
+
   itemsToShow.append(...generateTotalPages(goods));
 
   // ! - количество товаров на странице

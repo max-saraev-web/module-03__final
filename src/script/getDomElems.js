@@ -34,6 +34,8 @@ const pageControlsElems = () => {
   };
 };
 
+const searchInput = document.querySelector('.panel__input');
+
 export default {
   overlay,
   modalForm,
@@ -44,4 +46,5 @@ export default {
   totalPrice,
   modalTotal,
   pageControlsElems,
+  searchInput,
 };

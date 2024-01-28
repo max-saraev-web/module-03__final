@@ -9,6 +9,7 @@ import modal from './script/modal';
 import renderGoods from './script/render';
 import fetchRequest from './script/networking/fetchRequest';
 import pagesControl from './script/pagesControl';
+import searchControl from './script/search';
 
 const {
   overlay,
@@ -19,6 +20,7 @@ const {
   cms,
   totalPrice,
   pageControlsElems,
+  searchInput,
 } = elems;
 
 // * - Функционал
@@ -34,6 +36,7 @@ const init = async url => {
     $ ${total}
   `;
   pagesControl(url, pageControlsElems, tableBody);
+  searchControl(searchInput, url, tableBody, pageControlsElems);
 };
 
 document.addEventListener('DOMContentLoaded', () => {
