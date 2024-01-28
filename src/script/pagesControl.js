@@ -76,7 +76,7 @@ const pagesControl = async (url, elems, tBody) => {
 
     tBody.innerHTML = '';
     dataPage.goods.forEach((elem, i) => {
-      tBody.append(createRow(elem, i));
+      tBody.append(createRow(elem, i, url));
     });
     itemsToShow.innerHTML = '';
     itemsToShow.append(...generateTotalPages(dataPage.goods));
@@ -100,7 +100,7 @@ const pagesControl = async (url, elems, tBody) => {
       });
     tBody.innerHTML = '';
     dataPage.goods.forEach((elem, i) => {
-      tBody.append(createRow(elem, i));
+      tBody.append(createRow(elem, i, url));
     });
     itemsToShow.innerHTML = '';
     itemsToShow.append(...generateTotalPages(dataPage.goods));

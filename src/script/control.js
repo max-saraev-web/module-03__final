@@ -102,7 +102,7 @@ export const rowControl = async (
       const middleWidth = (screen.width / 2) - (800 / 2);
 
       const path = target.dataset.pic;
-      const popup = open('about:blank', '', 'popup', 'width=800', 'height=600');
+      const popup = open('about:blank', '', 'popup', 'width=600, height=600');
       const img = document.createElement('img');
       img.src = path;
       img.style.cssText = `
