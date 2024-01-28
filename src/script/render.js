@@ -6,6 +6,7 @@ const renderGoods = async (arr, tBody) => {
     method: 'get',
   });
   const {goods} = data;
+
   if (Array.isArray(goods)) {
     tBody.innerHTML = '';
     goods.forEach((elem, i) => {

@@ -80,15 +80,22 @@ export const rowControl = async (
       openModal(overlay);
     }
     if (target.matches('.table__btn_del')) {
-      dataNew.splice([...document.querySelectorAll('.table__row')]
-        .indexOf(target.closest('.table__row')), 1);
-
+      const line =
+        target
+          .parentElement
+          .parentElement.querySelector('.table__cell_name')
+          .dataset.id;
+      // dataNew.splice([...document.querySelectorAll('.table__row')]
+      //   .indexOf(target.closest('.table__row')), 1);
+      await fetchRequest(data + `api/goods/${line}`, {
+        method: 'DELETE',
+      });
       target.closest('.table__row').remove();
 
       countRows();
-      totalPrice.textContent = `
-        $ ${calcTotal(data)}
-      `;
+      // totalPrice.textContent = `
+      //   $ ${calcTotal(data)}
+      // `;
     }
     if (target.matches('.table__btn_pic')) {
       const middleHeight = (screen.height / 2) - (600 / 2);

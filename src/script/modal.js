@@ -1,5 +1,6 @@
 import createRow from './createElems';
 import createPreview from './createPreview';
+import fetchRequest from './networking/fetchRequest';
 import {calcTotal, toBase64} from './utility';
 
 export const openModal = overlay => overlay.classList.add('active');
@@ -22,7 +23,7 @@ const calcTotalForm = form => {
   `;
 };
 
-const modal = (overlay, form, discountTrigger, data, tableBody, totalPrice) => {
+const modal = (overlay, form, discountTrigger, url, tableBody, totalPrice) => {
   closeModal(overlay);
   overlay.addEventListener('click', ev => {
     const target = ev.target;
@@ -50,9 +51,12 @@ const modal = (overlay, form, discountTrigger, data, tableBody, totalPrice) => {
     ev.preventDefault();
     const formData = new FormData(target);
 
-    const obj = Object.fromEntries(formData);
+    let obj = Object.fromEntries(formData);
+    obj = Object.assign({title: obj.name}, obj);
+    delete obj.name;
+
     obj.image = await toBase64(obj.image);
-    obj.pic = obj.image.name;
+    // obj.pic = obj.image.name;
     obj.id = +overlay.querySelector('.vendor-code__id').textContent;
     let ittr = 0;
 
@@ -61,11 +65,18 @@ const modal = (overlay, form, discountTrigger, data, tableBody, totalPrice) => {
       i++) {
       ittr = i;
     }
-    data.push(obj);
+    await fetchRequest(url + `api/goods`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: obj,
+    });
+    console.log(obj);
     tableBody.append(createRow(obj, ittr));
-    totalPrice.textContent = `
-      $ ${calcTotal(data)}
-    `;
+    // totalPrice.textContent = `
+    //   $ ${calcTotal(data)}
+    // `;
     target.total.textContent = `$ 0`;
     target.reset();
     overlay.classList.remove('active');

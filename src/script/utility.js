@@ -18,7 +18,6 @@ export const countRows = () => {
 };
 
 export const calcTotal = async elems => {
-  // console.log(elems);
   const data = await fetchRequest(elems, {
     method: 'GET',
   });
@@ -40,3 +39,19 @@ export const toBase64 = file => new Promise((resolve, reject) => {
 
   reader.readAsDataURL(file);
 });
+
+export const pagesFractions = totalGoods => {
+  const fractions = [];
+
+  let start = 1;
+  let end = 10;
+
+  while (start <= totalGoods) {
+    end = Math.min(end, totalGoods);
+    fractions.push([start, end]);
+
+    start += 10;
+    end += 10;
+  }
+  return fractions;
+};

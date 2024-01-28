@@ -14,6 +14,26 @@ const totalPrice = document.querySelector('.cms__total-price');
 
 const modalTotal = document.querySelector('.modal__total-price');
 
+const pageControlsElems = () => {
+  const block = document.querySelector('.sub-panel');
+  const prev = block.querySelector('.sub-panel__left');
+  const next = block.querySelector('.sub-panel__right');
+  const wrap = block.querySelector('.sub-panel__choice-pages');
+  const pagesBlock = block.querySelector('.sub-panel__pages');
+  const total = pagesBlock.querySelector('.sub-panel__total');
+  const currentGoods = pagesBlock.querySelector('.sub-panel__current-goods');
+
+  return {
+    block,
+    prev,
+    next,
+    wrap,
+    pagesBlock,
+    total,
+    currentGoods,
+  };
+};
+
 export default {
   overlay,
   modalForm,
@@ -23,4 +43,5 @@ export default {
   cms,
   totalPrice,
   modalTotal,
+  pageControlsElems,
 };

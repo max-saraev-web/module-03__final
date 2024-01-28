@@ -13,6 +13,11 @@
 
 .sub-panel__choice-pages {
   margin-right: 50px;
+  display: flex;
+  align-items: center;
+  & p{
+    margin-right: 8px;
+  }
 }
 
 .sub-panel__pages {
