@@ -22,6 +22,7 @@ export const rowControl = async (
     const overlayClose = overlay.querySelector('.preview__close');
     const preview = overlay.querySelector('.preview');
     const fileInput = overlay.querySelector('.modal__file');
+
     if (target === overlayClose) {
       fileInput.value = '';
       preview.remove();
@@ -32,6 +33,30 @@ export const rowControl = async (
     const target = ev.target;
 
     if (target.matches('.table__btn_edit')) {
+      const totalOutput = overlay.querySelector('.modal__total-price');
+      // ! - компонент 1
+      const priceData = {
+        price: 0,
+        count: 1,
+        discount: 0,
+        reset() {
+          this.price = 0;
+          this.count = 1;
+          this.discount = 0;
+        },
+      };
+      // ! - компонент 2
+      const finalPrice = obj => {
+        const {price, count, discount} = obj;
+
+        const dicountAmount = ((price * count) / 100) * discount;
+        if (discount) {
+          return (price * count) - dicountAmount;
+        } else {
+          return price * count;
+        }
+      };
+
       const line =
         target
           .parentElement
@@ -62,18 +87,26 @@ export const rowControl = async (
       units.value = `${goodData.units}`;
       count.value = `${goodData.count}`;
       price.value = `${goodData.price}`;
+
+      priceData.price = goodData.price;
+      priceData.count = goodData.count;
+
       if (goodData.discount) {
         discount.checked = true;
         discontCountField.value = `${goodData.discount}`;
+        priceData.discount = goodData.discount;
       } else {
         discount.checked = false;
         discontCountField.value = '';
         discontCountField.disabled;
       }
+      console.log(priceData);
+      totalOutput.textContent = `$ ${finalPrice(priceData)}`;
       openModal(overlay);
     }
 
     if (target === add) {
+      overlay.querySelector('.modal__title').textContent = 'Добавить ТОВАР';
       overlay.querySelector('.vendor-code__id').textContent = getId();
       const label = overlay.querySelector('.modal__label_category');
       label.append(categories);

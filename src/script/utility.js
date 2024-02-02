@@ -69,3 +69,5 @@ export const generateTotalPages = arr => {
   }
   return newArr;
 };
+
+export const discountCalc = (amount, discount) => (amount / 100) * discount;

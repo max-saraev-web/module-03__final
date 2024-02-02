@@ -1,0 +1,35 @@
+.modal__error{
+  width: 350px;
+  height: 350px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: transparent;
+  border: none;
+  color: #6E6893;
+  transition: all 0.3s ease-in-out;
+  text-align: center;
+  padding-bottom: 90px;
+  
+  &-text{
+    color: #6E6893;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 10%;
+    text-align: center;
+  }
+  &-btn{
+  border: none;
+  color: #6E6893;
+  transition: all 0.3s ease-in-out;
+  position: absolute;
+  right: 30px;
+  top: 26px;
+  @media (min-width: 1200px) {
+      &:hover{
+        color: crimson;
+      }
+    }
+  }
+}

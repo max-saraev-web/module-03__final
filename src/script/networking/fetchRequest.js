@@ -21,7 +21,7 @@ const fetchRequest = async (url, {
     }
     throw new Error(response.status);
   } catch (error) {
-    callback(error);
+    return callback(error);
   }
 };
 
