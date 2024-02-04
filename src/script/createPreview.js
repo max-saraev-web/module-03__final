@@ -1,6 +1,7 @@
 import {createElement} from './createElems';
 
 const createPreview = file => {
+  const isFile = typeof file === 'string' ? file : URL.createObjectURL(file);
   const wrap = createElement('div',
     {
       className: 'preview',
@@ -8,7 +9,7 @@ const createPreview = file => {
 
   const wrapImg = new Image();
   wrapImg.classList.add('preview__img');
-  wrapImg.src = URL.createObjectURL(file);
+  wrapImg.src = isFile;
 
   const overlay = createElement('div', {
     className: 'preview__overlay',

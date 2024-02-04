@@ -2,44 +2,21 @@ import createRow from './createElems';
 import createPreview from './createPreview';
 import errorModal from './errorModal';
 import fetchRequest from './networking/fetchRequest';
-import {toBase64} from './utility';
-
-const priceData = {
-  price: 0,
-  count: 1,
-  discount: 0,
-  reset() {
-    this.price = 0;
-    this.count = 1;
-    this.discount = 0;
-  },
-};
+import renderGoods from './render';
+import {goodCalcFields, toBase64} from './utility';
 
 export const openModal = overlay => overlay.classList.add('active');
-export const closeModal = (overlay, priceObj) => {
+export const closeModal = (overlay) => {
   const form = overlay.querySelector('form');
   form.reset();
   overlay.classList.remove('active');
-  priceObj.reset();
   form.total.textContent = '$';
 };
 
 const discoutInput = document.querySelector('.modal__input_discount');
 const priceInput = document.querySelector('#price');
 const countInput = document.querySelector('#count');
-
-
-priceData.reset();
-const finalPrice = obj => {
-  const {price, count, discount} = obj;
-
-  const dicountAmount = ((price * count) / 100) * discount;
-  if (discount) {
-    return (price * count) - dicountAmount;
-  } else {
-    return price * count;
-  }
-};
+const discountCheckbox = document.querySelector('#discount');
 
 const message = document.createElement('span');
 message.classList.add('file-warning');
@@ -51,20 +28,14 @@ message.style.cssText = `
 `;
 message.textContent = 'ИЗОБРАЖЕНИЕ НЕ ДОЛЖНО ПРЕВЫЩАТЬ РАЗМЕР 1 МБ';
 
-// const calcTotalForm = obj => {
-//   const {count, price, total} = obj;
-//   total.textContent = `
-//     $ ${count.value * price.value}
-//   `;
-// };
 
 const modal = (overlay, form, discountTrigger, url, tableBody, totalPrice) => {
-  closeModal(overlay, priceData);
+  closeModal(overlay);
   overlay.addEventListener('click', ev => {
     const target = ev.target;
 
     if (target.closest('.modal__close') || target === overlay) {
-      closeModal(overlay, priceData);
+      closeModal(overlay);
     }
 
     if (form.discount.checked) {
@@ -76,7 +47,7 @@ const modal = (overlay, form, discountTrigger, url, tableBody, totalPrice) => {
   });
   window.addEventListener('keydown', ev => {
     if (ev.code === 'Escape') {
-      closeModal(overlay, priceData);
+      closeModal(overlay);
     }
   });
   // form.addEventListener('change', () => calcTotalForm(form));
@@ -92,7 +63,6 @@ const modal = (overlay, form, discountTrigger, url, tableBody, totalPrice) => {
     obj.discount = discoutInput.value;
 
     obj.image = await toBase64(obj.image);
-    // obj.pic = obj.image.name;
     obj.id = +overlay.querySelector('.vendor-code__id').textContent;
     let ittr = 0;
 
@@ -101,28 +71,68 @@ const modal = (overlay, form, discountTrigger, url, tableBody, totalPrice) => {
       i++) {
       ittr = i;
     }
-    // console.log(obj);
-    await fetchRequest(url + `api/goods`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-      body: obj,
-      callback: errorModal,
-    }).then(() => {
-      tableBody.append(createRow(obj, ittr));
-      target.total.textContent = `$ 0`;
-      target.reset();
-      closeModal(overlay, priceData);
-    }, (data) => {
-      console.log('reject', overlay);
-    });
+    const getMode = () => {
+      const title = overlay.querySelector('.modal__title').textContent;
+      if (title === 'Добавить ТОВАР') {
+        return 'POST';
+      } else {
+        return 'PATCH';
+      }
+    };
+    const mode = getMode();
+    if (mode === 'PATCH') {
+      if (!obj.image.startsWith('data:image/webp;')) delete obj.image;
+      await fetchRequest(url + `api/goods/${obj.id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: `${mode}`,
+        body: obj,
+        callback: errorModal,
+      }).then(async () => {
+        renderGoods(url, tableBody);
+        target.total.textContent = `$ 0`;
+        target.reset();
+        closeModal(overlay);
+        const total = await fetchRequest(url + 'api/total', {
+          method: 'get',
+        });
+        totalPrice.textContent = `
+          $ ${total}
+        `;
+      }, (data) => {
+        console.log('reject', overlay);
+      });
+    }
+    if (mode === 'POST') {
+      await fetchRequest(url + `api/goods`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: obj,
+        callback: errorModal,
+      }).then(async () => {
+        tableBody.append(createRow(obj, ittr));
+        target.total.textContent = `$ 0`;
+        target.reset();
+        closeModal(overlay);
+        const total = await fetchRequest(url + 'api/total', {
+          method: 'get',
+        });
+        totalPrice.textContent = `
+          $ ${total}
+        `;
+      }, (data) => {
+        console.log('reject', overlay);
+      });
+    }
   });
 
   const fileBtn = form.querySelector('.modal__file');
   const fieldSet = document.querySelector('.modal__fieldset');
 
-  fileBtn.addEventListener('change', async ({target}) => {
+  fileBtn.addEventListener('change', ({target}) => {
     const warning = form.querySelector('.file-warning');
     const prevImg = document.querySelector('.preview');
     if (warning) message.remove();
@@ -133,34 +143,9 @@ const modal = (overlay, form, discountTrigger, url, tableBody, totalPrice) => {
     } else {
       const wrap = createPreview(target.files[0]);
       fieldSet.append(wrap);
-
-      const result = await toBase64(target.files[0]);
     }
   });
-
-  discoutInput.addEventListener('input', ({target}) => {
-    target.value = target.value.replace(/\D/gim, '');
-    target.value = target.value.slice(0, 2);
-
-    priceData.discount = target.value;
-    form.total.textContent = `
-    $ ${finalPrice(priceData)}
-    `;
-  });
-
-  priceInput.addEventListener('input', ({target}) => {
-    priceData.price = target.value;
-    form.total.textContent = `
-      $ ${finalPrice(priceData)}
-    `;
-  });
-
-  countInput.addEventListener('input', ({target}) => {
-    priceData.count = target.value;
-    form.total.textContent = `
-      $ ${finalPrice(priceData)}
-    `;
-  });
+  goodCalcFields(form, priceInput, countInput, discountCheckbox, discoutInput);
 };
 
 export default modal;

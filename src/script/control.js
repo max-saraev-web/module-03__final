@@ -1,7 +1,8 @@
 import {createCategoryList} from './createElems';
+import createPreview from './createPreview';
 import {openModal} from './modal';
 import fetchRequest from './networking/fetchRequest';
-import {calcTotal, countRows, getId, toBase64} from './utility';
+import {countRows, getId} from './utility';
 
 export const rowControl = async (
     data,
@@ -10,10 +11,6 @@ export const rowControl = async (
     add,
     totalPrice,
 ) => {
-  const dataNew = await fetchRequest(data + 'api/goods', {
-    method: 'get',
-  });
-  // console.log('dataNew: ', dataNew);
   const categories = await fetchRequest(data + 'api/categories', {
     method: 'get',
   }).then(data => createCategoryList(data));
@@ -64,6 +61,18 @@ export const rowControl = async (
           .dataset.id;
       overlay.querySelector('.vendor-code__id').textContent = line;
       overlay.querySelector('.modal__title').textContent = 'Изменить ТОВАР';
+
+      const imgUrl =
+        target.parentElement.querySelector('.table__btn_pic').dataset.pic;
+      const previewImg = createPreview(imgUrl);
+      const fieldSet = document.querySelector('.modal__fieldset');
+      fieldSet.append(previewImg);
+      const previewClose = document.querySelector('.preview__close');
+      previewClose.addEventListener('click', () => {
+        previewImg.remove();
+      });
+
+
       const label = overlay.querySelector('.modal__label_category');
       label.append(categories);
 
@@ -100,7 +109,6 @@ export const rowControl = async (
         discontCountField.value = '';
         discontCountField.disabled;
       }
-      console.log(priceData);
       totalOutput.textContent = `$ ${finalPrice(priceData)}`;
       openModal(overlay);
     }
@@ -110,6 +118,9 @@ export const rowControl = async (
       overlay.querySelector('.vendor-code__id').textContent = getId();
       const label = overlay.querySelector('.modal__label_category');
       label.append(categories);
+      const previewElem = document.querySelector('.preview');
+      if (previewElem) previewElem.remove();
+
       openModal(overlay);
     }
     if (target.matches('.table__btn_del')) {
@@ -122,6 +133,13 @@ export const rowControl = async (
       //   .indexOf(target.closest('.table__row')), 1);
       await fetchRequest(data + `api/goods/${line}`, {
         method: 'DELETE',
+      }).then(async () => {
+        const total = await fetchRequest(data + 'api/total', {
+          method: 'get',
+        });
+        totalPrice.textContent = `
+        $ ${total}
+      `;
       });
       target.closest('.table__row').remove();
 
