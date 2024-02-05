@@ -2,7 +2,7 @@ import {createCategoryList} from './createElems';
 import createPreview from './createPreview';
 import {openModal} from './modal';
 import fetchRequest from './networking/fetchRequest';
-import {countRows, getId} from './utility';
+import {countRows, generateTotalPages, getId, pagesFractions} from './utility';
 
 export const rowControl = async (
     data,
@@ -10,6 +10,7 @@ export const rowControl = async (
     overlay,
     add,
     totalPrice,
+    elems,
 ) => {
   const categories = await fetchRequest(data + 'api/categories', {
     method: 'get',
@@ -115,6 +116,10 @@ export const rowControl = async (
 
     if (target === add) {
       overlay.querySelector('.modal__title').textContent = 'Добавить ТОВАР';
+
+      const preview = overlay.querySelector('.preview');
+      if (preview) preview.remove();
+
       overlay.querySelector('.vendor-code__id').textContent = getId();
       const label = overlay.querySelector('.modal__label_category');
       label.append(categories);
@@ -134,6 +139,19 @@ export const rowControl = async (
       await fetchRequest(data + `api/goods/${line}`, {
         method: 'DELETE',
       }).then(async () => {
+        const select = document.querySelector('select');
+        select.innerHTML = '';
+        const pages = await fetchRequest(data + `api/goods`, {
+          method: 'GET',
+        });
+        const {totalCount, goods} = pages;
+        const {total: totalInpage, currentGoods} = elems();
+        const output = pagesFractions(totalCount);
+        const [start, end] = output[1];
+        currentGoods.textContent = `${start} - ${end}`;
+        totalInpage.textContent = totalCount;
+        select.append(...generateTotalPages(goods));
+
         const total = await fetchRequest(data + 'api/total', {
           method: 'get',
         });

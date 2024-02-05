@@ -1,9 +1,8 @@
-import createRow from './createElems';
 import createPreview from './createPreview';
 import errorModal from './errorModal';
 import fetchRequest from './networking/fetchRequest';
 import renderGoods from './render';
-import {goodCalcFields, toBase64} from './utility';
+import {generateTotalPages, goodCalcFields, pagesFractions, toBase64} from './utility';
 
 export const openModal = overlay => overlay.classList.add('active');
 export const closeModal = (overlay) => {
@@ -29,7 +28,8 @@ message.style.cssText = `
 message.textContent = 'ИЗОБРАЖЕНИЕ НЕ ДОЛЖНО ПРЕВЫЩАТЬ РАЗМЕР 1 МБ';
 
 
-const modal = (overlay, form, discountTrigger, url, tableBody, totalPrice) => {
+const modal = (overlay, form, discountTrigger, url, tableBody, totalPrice,
+    elems) => {
   closeModal(overlay);
   overlay.addEventListener('click', ev => {
     const target = ev.target;
@@ -113,8 +113,22 @@ const modal = (overlay, form, discountTrigger, url, tableBody, totalPrice) => {
         body: obj,
         callback: errorModal,
       }).then(async () => {
-        tableBody.append(createRow(obj, ittr));
+        renderGoods(url, tableBody);
         target.total.textContent = `$ 0`;
+
+        const select = document.querySelector('select');
+        select.innerHTML = '';
+        const pages = await fetchRequest(url + `api/goods`, {
+          method: 'GET',
+        });
+        const {totalCount, goods} = pages;
+        const {total: totalInpage, currentGoods} = elems();
+        const output = pagesFractions(totalCount);
+        const [start, end] = output[1];
+        currentGoods.textContent = `${start} - ${end}`;
+        totalInpage.textContent = totalCount;
+        select.append(...generateTotalPages(goods));
+
         target.reset();
         closeModal(overlay);
         const total = await fetchRequest(url + 'api/total', {

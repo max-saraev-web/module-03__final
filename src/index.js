@@ -26,8 +26,8 @@ const {
 // * - Функционал
 const init = async url => {
   modal(overlay, modalForm, modalInputDiscount,
-    url, tableBody, totalPrice);
-  rowControl(url, cms, overlay, addBtn, totalPrice);
+    url, tableBody, totalPrice, pageControlsElems);
+  rowControl(url, cms, overlay, addBtn, totalPrice, pageControlsElems);
   renderGoods(url, tableBody);
   const total = await fetchRequest(url + 'api/total', {
     method: 'get',
