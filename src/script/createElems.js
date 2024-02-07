@@ -25,7 +25,7 @@ export const createElement =
     return element;
   };
 
-const createRow =  (obj, i, url) => {
+const createRow = (obj, i, url) => {
   const elem = createElement('tr');
   elem.classList.add('table__row');
 
@@ -79,8 +79,8 @@ const createRow =  (obj, i, url) => {
         (price * count) - dicountAmount : price * count}</td>
       <td class="table__cell table__cell_btn-wrapper">
         <button data-pic="${url}${pic}"
-          class="table__btn table__btn_pic${trigger === true ?
-            '' : '-empty'}"></button>
+          class="table__btn table__btn_pic ${trigger === true ?
+            '' : 'table__btn_pic-empty'}"></button>
         <button class="table__btn table__btn_edit"></button>
         <button class="table__btn table__btn_del"></button>
       </td>

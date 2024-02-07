@@ -2,7 +2,8 @@ import createPreview from './createPreview';
 import errorModal from './errorModal';
 import fetchRequest from './networking/fetchRequest';
 import renderGoods from './render';
-import {generateTotalPages, goodCalcFields, pagesFractions, toBase64} from './utility';
+import {generateTotalPages, goodCalcFields, pagesFractions,
+  toBase64} from './utility';
 
 export const openModal = overlay => overlay.classList.add('active');
 export const closeModal = (overlay) => {
@@ -10,6 +11,8 @@ export const closeModal = (overlay) => {
   form.reset();
   overlay.classList.remove('active');
   form.total.textContent = '$';
+  const preview = document.querySelector('.preview');
+  if (preview) preview.remove();
 };
 
 const discoutInput = document.querySelector('.modal__input_discount');
@@ -64,13 +67,7 @@ const modal = (overlay, form, discountTrigger, url, tableBody, totalPrice,
 
     obj.image = await toBase64(obj.image);
     obj.id = +overlay.querySelector('.vendor-code__id').textContent;
-    let ittr = 0;
 
-    for (let i = 1;
-      i < document.querySelectorAll('.table__row').length + 1;
-      i++) {
-      ittr = i;
-    }
     const getMode = () => {
       const title = overlay.querySelector('.modal__title').textContent;
       if (title === 'Добавить ТОВАР') {
@@ -81,7 +78,23 @@ const modal = (overlay, form, discountTrigger, url, tableBody, totalPrice,
     };
     const mode = getMode();
     if (mode === 'PATCH') {
-      if (!obj.image.startsWith('data:image/webp;')) delete obj.image;
+      const {image} = await fetchRequest(url + `api/goods/${obj.id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'GET',
+      });
+
+      const imgRegex = /(\d+)\.(webp|jpg|jpeg|png|svg|gif)$/;
+      if (imgRegex.test(document.querySelector('.preview__img').src) &&
+        imgRegex.test(image)) {
+        if (document.querySelector('.preview__img').src
+          .match(/(\d+)\.(webp|jpg|jpeg|png|svg|gif)$/)[0] ===
+          image.match(/(\d+)\.(webp|jpg|jpeg|png|svg|gif)$/)[0]) {
+          obj.image = image;
+        }
+      }
+
       await fetchRequest(url + `api/goods/${obj.id}`, {
         headers: {
           'Content-Type': 'application/json',

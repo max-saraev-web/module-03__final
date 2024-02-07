@@ -1,4 +1,4 @@
-import {createCategoryList} from './createElems';
+import {createCategoryList, createElement} from './createElems';
 import createPreview from './createPreview';
 import {openModal} from './modal';
 import fetchRequest from './networking/fetchRequest';
@@ -64,15 +64,27 @@ export const rowControl = async (
       overlay.querySelector('.modal__title').textContent = 'Изменить ТОВАР';
 
       const imgUrl =
-        target.parentElement.querySelector('.table__btn_pic').dataset.pic;
+        target?.parentElement.querySelector('.table__btn_pic').dataset.pic;
+
       const previewImg = createPreview(imgUrl);
       const fieldSet = document.querySelector('.modal__fieldset');
-      fieldSet.append(previewImg);
-      const previewClose = document.querySelector('.preview__close');
-      previewClose.addEventListener('click', () => {
-        previewImg.remove();
-      });
 
+      if (/(\d+)\.(webp|jpg|jpeg|png|svg|gif)$/
+        .test(imgUrl)) {
+        new Promise(resolve => {
+          const img = createElement('img');
+          img.src = imgUrl;
+          img.addEventListener('load', () => {
+            resolve();
+          });
+        }).then(() => {
+          fieldSet.append(previewImg);
+          const previewClose = document.querySelector('.preview__close');
+          previewClose.addEventListener('click', () => {
+            previewImg.remove();
+          });
+        });
+      }
 
       const label = overlay.querySelector('.modal__label_category');
       label.append(categories);

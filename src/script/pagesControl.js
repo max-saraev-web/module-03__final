@@ -42,7 +42,7 @@ const pagesControl = async (url, elems, tBody) => {
 
     tBody.innerHTML = '';
     amountOfGood.forEach((elem, i) => {
-      tBody.append(createRow(elem, i));
+      tBody.append(createRow(elem, i, url));
     });
   });
   // ! - стрелочки

@@ -76,11 +76,7 @@
   background-image: url("../img/pic.svg");
   &-empty{
     background-image: url("../img/pic-empty.svg");
-    @media (min-width: 1200px) {
-      &:hover{
-        cursor: not-allowed;
-      }
-    }
+    pointer-events: none;
   }
 }
 
