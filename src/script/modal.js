@@ -86,13 +86,17 @@ const modal = (overlay, form, discountTrigger, url, tableBody, totalPrice,
       });
 
       const imgRegex = /(\d+)\.(webp|jpg|jpeg|png|svg|gif)$/;
-      if (imgRegex.test(document.querySelector('.preview__img').src) &&
+      if (imgRegex.test(document.querySelector('.preview__img')?.src) &&
         imgRegex.test(image)) {
         if (document.querySelector('.preview__img').src
           .match(/(\d+)\.(webp|jpg|jpeg|png|svg|gif)$/)[0] ===
           image.match(/(\d+)\.(webp|jpg|jpeg|png|svg|gif)$/)[0]) {
           obj.image = image;
         }
+      }
+      if (priceInput.value > 0 && discoutInput.value > 0) {
+        const dicountAmount = (priceInput.value / 100) * discoutInput.value;
+        obj.price = priceInput.value - dicountAmount;
       }
 
       await fetchRequest(url + `api/goods/${obj.id}`, {
