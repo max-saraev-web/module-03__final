@@ -122,6 +122,10 @@ const modal = (overlay, form, discountTrigger, url, tableBody, totalPrice,
       });
     }
     if (mode === 'POST') {
+      if (priceInput.value > 0 && discoutInput.value > 0) {
+        const dicountAmount = (priceInput.value / 100) * discoutInput.value;
+        obj.price = priceInput.value - dicountAmount;
+      }
       await fetchRequest(url + `api/goods`, {
         headers: {
           'Content-Type': 'application/json',

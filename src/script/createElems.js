@@ -30,9 +30,17 @@ const createRow = (obj, i, url) => {
   elem.classList.add('table__row');
 
   if (typeof obj === 'object' && obj !== null && !Array.isArray(obj)) {
+    const reverseDiscount = (discountedPrice, discount) =>
+      discountedPrice / (1 - discount / 100);
+
+    let fixedOutput = NaN;
+    if (obj.discount > 0) {
+      fixedOutput = reverseDiscount(obj.price, obj.discount);
+    }
+
     const {id, title, category, count, price, units, name, image: pic,
       discount = 0} = obj;
-    const dicountAmount = ((price * count) / 100) * discount;
+    const dicountAmount = ((Math.floor(fixedOutput) * count) / 100) * discount;
 
     new Promise((resolve, reject) => {
       const img = new Image();
@@ -53,9 +61,10 @@ const createRow = (obj, i, url) => {
       <td class="table__cell table__cell_left">${category}</td>
       <td class="table__cell">${units}</td>
       <td class="table__cell">${count}</td>
-      <td class="table__cell">$${price}</td>
+      <td class="table__cell">$${fixedOutput > 0 ?
+        Math.floor(fixedOutput) : price}</td>
       <td class="table__cell table__total-price">$${dicountAmount > 0 ?
-        (price * count) - dicountAmount : price * count}</td>
+        (Math.floor(fixedOutput) * count) - dicountAmount : price * count}</td>
       <td class="table__cell table__cell_btn-wrapper">
         <button data-pic="${url}${pic}"
           class="table__btn table__btn_pic${trigger === true ?
@@ -74,9 +83,10 @@ const createRow = (obj, i, url) => {
       <td class="table__cell table__cell_left">${category}</td>
       <td class="table__cell">${units}</td>
       <td class="table__cell">${count}</td>
-      <td class="table__cell">$${price}</td>
+      <td class="table__cell">$${fixedOutput > 0 ?
+        Math.floor(fixedOutput) : price}</td>
       <td class="table__cell table__total-price">$${dicountAmount > 0 ?
-        (price * count) - dicountAmount : price * count}</td>
+        (Math.floor(fixedOutput) * count) - dicountAmount : price * count}</td>
       <td class="table__cell table__cell_btn-wrapper">
         <button data-pic="${url}${pic}"
           class="table__btn table__btn_pic ${trigger === true ?

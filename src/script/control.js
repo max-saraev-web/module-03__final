@@ -93,6 +93,15 @@ export const rowControl = async (
         method: 'get',
       });
 
+      const reverseDiscount = (discountedPrice, discount) =>
+        discountedPrice / (1 - discount / 100);
+
+      let fixedOutput = NaN;
+      if (goodData.discount > 0) {
+        fixedOutput = reverseDiscount(goodData.price, goodData.discount);
+      }
+
+
       const discontCountField = overlay.querySelector('form')['discount_count'];
       const formElements = overlay.querySelector('form').elements;
       const {
@@ -108,9 +117,9 @@ export const rowControl = async (
       description.value = `${goodData.description}`;
       units.value = `${goodData.units}`;
       count.value = `${goodData.count}`;
-      price.value = `${goodData.price}`;
+      price.value = `${fixedOutput > 0 ? fixedOutput : goodData.price}`;
 
-      priceData.price = goodData.price;
+      priceData.price = fixedOutput > 0 ? fixedOutput : goodData.price;
       priceData.count = goodData.count;
 
       if (goodData.discount) {
